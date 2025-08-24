@@ -1,6 +1,7 @@
 package org.acme.presentacion.impl;
 
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
@@ -24,6 +25,7 @@ public class PresentacionImpl implements UserApi {
    * @return
    */
   @Override
+  @Transactional
   public User createUser(User user) {
     if(user.getUserStatus() != null) {
       return personBuilder.builderFromPersonEntityToPerson(
@@ -42,6 +44,7 @@ public class PresentacionImpl implements UserApi {
    * @param username
    */
   @Override
+  @Transactional
   public void deleteUser(String username) {
     if (username != null || !username.isEmpty()){
       personRepository.deleteByUserName(username);
@@ -61,6 +64,7 @@ public class PresentacionImpl implements UserApi {
    * @return
    */
   @Override
+  @Transactional
   public User getUserByName(String username) {
     PersonEntity personEntity = personRepository.findByUserName(username);
     if (personEntity == null) {
@@ -73,8 +77,23 @@ public class PresentacionImpl implements UserApi {
    * @param username
    * @param user
    */
-  @Override
+  @Transactional
   public void updateUser(String username, User user) {
+    // Buscar la entidad por username
+    PersonEntity personEntity = personRepository.findByUserName(username);
 
+    // Verificar si se encontró la entidad
+    if (personEntity == null) {
+      throw new NotFoundException("Usuario con username " + username + " no encontrado");
+    }
+
+    // Actualizar solo los campos necesarios (no incluyas el ID)
+    personEntity.setUserStatus(user.getUserStatus());
+    personEntity.setFirstName(user.getFirstName());
+    personEntity.setLastName(user.getLastName());
+
+    // NO es necesario llamar a persist() porque la entidad ya está gestionada
+    // El contexto de persistencia de JPA actualizará automáticamente los cambios
+    // al final de la transacción
   }
 }
