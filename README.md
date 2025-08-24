@@ -65,10 +65,11 @@ Easily start your RESTful Web Services
 
 [Related guide section...](https://quarkus.io/guides/getting-started#the-jax-rs-resources)
 
-
+#  EJECUTAR DOCKER Y DOCKER COMPOSE
     mkdir -p ~/proyectos/mi-app
     cp /mnt/c/Users/nhuancap/eliminar/target/eliminar-1.0.0-SNAPSHOT.jar . ->me ubico en la carpeta mi-app para copiar
     nano Dockerfile  (aqui copias la infromacion de dockerfile)
+    clean ->quarkus->quakus:build
     docker build -t image-quarkus-user . -> Creo la imagen
     docker-compose up -d --build  ->para ejecutar el docker compose
 #  WINDOWS
@@ -77,8 +78,8 @@ Easily start your RESTful Web Services
 #  API LOCAL
     # En la raíz de tu proyecto Quarkus
     ./mvnw clean package
-    docker build -t quarkus-image-user .
-    docker run -d --name quarkus-container -p 9011:9012 quarkus-image-user
+    docker build -t image-quarkus-user .
+    docker run -d --name container-quarkus-user -p 9011:9012 image-quarkus-user
 
 # POSTGREST DOCKER
     para ejecutar el Dockerfile:

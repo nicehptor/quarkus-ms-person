@@ -1,15 +1,15 @@
 package org.acme.presentacion.impl;
 
 import jakarta.inject.Inject;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import org.acme.api.UserApi;
 import org.acme.aplicacion.PersonRepository;
+import org.acme.infraestructura.PersonEntity;
 import org.acme.infraestructura.builder.PersonBuilder;
 import org.acme.model.User;
 import org.acme.utils.Constants;
-
-import java.util.List;
 import java.util.Map;
 
 public class PresentacionImpl implements UserApi {
@@ -25,12 +25,11 @@ public class PresentacionImpl implements UserApi {
    */
   @Override
   public User createUser(User user) {
-    if(user.getUserStatus() != null)
-      return personBuilder.builderFromUserToUserEntity(
+    if(user.getUserStatus() != null) {
+      return personBuilder.builderFromPersonEntityToPerson(
           personRepository.save(
-              personBuilder.builderFromUserEntityToUser(user)));
-
-    else{
+              personBuilder.builderFromPersonToPersonEntity(user)));
+    } else{
       throw new WebApplicationException(
           Response.status(Response.Status.TOO_MANY_REQUESTS)
               .entity(Map.of("error", Constants.MESSAGE))
@@ -40,21 +39,22 @@ public class PresentacionImpl implements UserApi {
   }
 
   /**
-   * @param user
-   * @return
-   */
-  @Override
-  public User createUsersWithListInput(List<User> user) {
-    return null;
-  }
-
-  /**
    * @param username
    */
   @Override
   public void deleteUser(String username) {
-
+    if (username != null || !username.isEmpty()){
+      personRepository.deleteByUserName(username);
+    }
+    else{
+      throw new WebApplicationException(
+          Response.status(Response.Status.TOO_MANY_REQUESTS)
+              .entity(Map.of("error", Constants.MESSAGE))
+              .build()
+      );
+    }
   }
+
 
   /**
    * @param username
@@ -62,7 +62,11 @@ public class PresentacionImpl implements UserApi {
    */
   @Override
   public User getUserByName(String username) {
-    return null;
+    PersonEntity personEntity = personRepository.findByUserName(username);
+    if (personEntity == null) {
+      throw new NotFoundException("User not found");
+    }
+    return personBuilder.builderFromPersonEntityToPerson(personEntity);
   }
 
   /**

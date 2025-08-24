@@ -6,7 +6,7 @@ import org.acme.model.User;
 
 @ApplicationScoped // Ejemplo de alcance
 public class PersonBuilder {
-  public PersonEntity builderFromUserEntityToUser(User user){
+  public PersonEntity builderFromPersonToPersonEntity(User user){
     PersonEntity builderEntity = new PersonEntity();
     builderEntity.setUsername(user.getUsername());
     builderEntity.setFirstName(user.getFirstName());
@@ -15,7 +15,7 @@ public class PersonBuilder {
     return builderEntity;
   }
 
-  public User builderFromUserToUserEntity(PersonEntity personEntity){
+  public User builderFromPersonEntityToPerson(PersonEntity personEntity){
     User user = new User();
     user.setId(personEntity.getId());
     user.setUsername(personEntity.getUsername());

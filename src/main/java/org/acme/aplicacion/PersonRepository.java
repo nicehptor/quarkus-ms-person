@@ -16,4 +16,15 @@ public class PersonRepository implements PanacheRepository<PersonEntity> {
     // Devolver el usuario guardado (ahora con ID generado)
     return personEntity;
   }
+
+  @Transactional
+  public long deleteByUserName(String username) {
+    // Eliminar por nombre de usuario y retornar el número de entidades eliminadas
+    return delete("username", username);
+  }
+
+  @Transactional
+  public PersonEntity findByUserName(String username) {
+    return find("username", username).firstResult();
+  }
 }
